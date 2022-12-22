@@ -8,26 +8,35 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.tracker.jettipapp.components.InputField
 import com.tracker.jettipapp.ui.theme.JetTipAppTheme
 
+@ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MyApp {
-                TopHeader()
+                Column {
+                    TopHeader()
+                    MainContent()
+                }
             }
         }
     }
@@ -61,6 +70,7 @@ fun TopHeader(totalPerPerson: Double = 134.0) {
     }
 }
 
+@ExperimentalComposeUiApi
 @Preview
 @Composable
 fun MainContent(){
@@ -71,10 +81,27 @@ fun MainContent(){
         shape = RoundedCornerShape(corner = CornerSize(8.dp)),
         border = BorderStroke(1.dp, Color.LightGray)
     ) {
+        val totalBillState = remember {
+            mutableStateOf("0")
+        }
+        val validState = remember(totalBillState.value) {
+            totalBillState.value.trim().isNotEmpty()
+        }
+        val keyboardController = LocalSoftwareKeyboardController.current
         Column(
             modifier = Modifier
         ) {
-            // Required column will go here.
+            InputField(
+                valueState = totalBillState,
+                labelId = "Enter bill",
+                enabled = true,
+                isSingleLine = true,
+                onAction = KeyboardActions {
+                    if(!validState) return@KeyboardActions
+                    // TODO(): Update on valid state
+                    keyboardController?.hide()
+                }
+            )
         }
     }
 }

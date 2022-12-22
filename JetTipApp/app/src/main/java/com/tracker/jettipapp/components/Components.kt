@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AttachMoney
 import androidx.compose.material.icons.rounded.Money
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -37,7 +38,7 @@ fun InputField(
         enabled = enabled,
         textStyle = TextStyle(fontSize = 18.sp, color = MaterialTheme.colors.onBackground, ),
         label = { Text(text = labelId) },
-        leadingIcon = { Icon(imageVector = Icons.Rounded.Money, contentDescription = "Money Icon") },
+        leadingIcon = { Icon(imageVector = Icons.Rounded.AttachMoney, contentDescription = "Money Icon") },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType, imeAction = imeAction),
         singleLine = isSingleLine,
         keyboardActions = onAction
