@@ -1,6 +1,7 @@
 package com.tracker.jettipapp
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -74,20 +75,28 @@ fun TopHeader(totalPerPerson: Double = 134.0) {
 @Preview
 @Composable
 fun MainContent(){
+    BillForm(){ amount ->
+        Log.d("Amount", "MainContent: Amount changed to ${amount.toInt()}")
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {}){
+    val totalBillState = remember {
+        mutableStateOf("0")
+    }
+    val validState = remember(totalBillState.value) {
+        totalBillState.value.trim().isNotEmpty()
+    }
+    val keyboardController = LocalSoftwareKeyboardController.current
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(2.dp),
         shape = RoundedCornerShape(corner = CornerSize(8.dp)),
         border = BorderStroke(1.dp, Color.LightGray)
     ) {
-        val totalBillState = remember {
-            mutableStateOf("0")
-        }
-        val validState = remember(totalBillState.value) {
-            totalBillState.value.trim().isNotEmpty()
-        }
-        val keyboardController = LocalSoftwareKeyboardController.current
         Column(
             modifier = Modifier
         ) {
@@ -98,14 +107,13 @@ fun MainContent(){
                 isSingleLine = true,
                 onAction = KeyboardActions {
                     if(!validState) return@KeyboardActions
-                    // TODO(): Update on valid state
+                    onValueChanged(totalBillState.value)
                     keyboardController?.hide()
                 }
             )
         }
     }
 }
-
 
 @Composable
 fun MyApp(content: @Composable () -> Unit){
