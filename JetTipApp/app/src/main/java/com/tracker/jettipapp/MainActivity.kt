@@ -13,6 +13,10 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ImageSearch
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +29,10 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.tracker.jettipapp.components.InputField
 import com.tracker.jettipapp.ui.theme.JetTipAppTheme
+import com.tracker.jettipapp.widgets.RoundedIconButton
 
 @ExperimentalComposeUiApi
 class MainActivity : ComponentActivity() {
@@ -98,7 +104,9 @@ fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {
         border = BorderStroke(1.dp, Color.LightGray)
     ) {
         Column(
-            modifier = Modifier
+            modifier = Modifier.padding(2.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.Top
         ) {
             InputField(
                 valueState = totalBillState,
@@ -111,6 +119,38 @@ fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {
                     keyboardController?.hide()
                 }
             )
+            if(validState){
+                Row(
+                    horizontalArrangement = Arrangement.Center, 
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Split",
+                        modifier = Modifier.padding(start = 12.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                    )
+                    Spacer(modifier = Modifier.width(120.dp))
+                    Row(
+                        modifier = Modifier.padding(3.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        RoundedIconButton(
+                            modifier = modifier,
+                            imageVector = Icons.Default.Remove,
+                            onClick = { Log.d("TAG", "BillForm: Remove button clicked.") }
+                        )
+                        RoundedIconButton(
+                            modifier = modifier,
+                            imageVector = Icons.Default.Add,
+                            onClick = { Log.d("TAG", "BillForm: Add button clicked.") }
+                        )
+                    }
+                }
+            } else {
+                Box(modifier = Modifier)
+            }
         }
     }
 }
