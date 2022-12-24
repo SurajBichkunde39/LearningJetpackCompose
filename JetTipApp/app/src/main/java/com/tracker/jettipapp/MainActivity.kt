@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Slider
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.tracker.jettipapp.components.InputField
 import com.tracker.jettipapp.ui.theme.JetTipAppTheme
+import com.tracker.jettipapp.util.getTipAmount
 import com.tracker.jettipapp.widgets.RoundedIconButton
 
 @ExperimentalComposeUiApi
@@ -96,6 +98,18 @@ fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {
         totalBillState.value.trim().isNotEmpty()
     }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val splitCounter = remember {
+        mutableStateOf(0)
+    }
+    val sliderPosition = remember {
+        mutableStateOf(0f)
+    }
+    val tipPercentage = (sliderPosition.value * 100).toInt()
+
+    val tipAmount = remember {
+        mutableStateOf(0)
+    }
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -120,8 +134,10 @@ fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {
                 }
             )
             if(validState){
+                // Split Row
                 Row(
-                    horizontalArrangement = Arrangement.Center, 
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
@@ -139,14 +155,49 @@ fun BillForm(modifier: Modifier = Modifier, onValueChanged: (String) -> Unit = {
                         RoundedIconButton(
                             modifier = modifier,
                             imageVector = Icons.Default.Remove,
-                            onClick = { Log.d("TAG", "BillForm: Remove button clicked.") }
+                            onClick = {
+                                if (splitCounter.value > 0) {
+                                    splitCounter.value--
+                                }
+                            }
+                        )
+                        Text(
+                            text = "${splitCounter.value}",
+                            modifier = Modifier
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 9.dp, end = 9.dp),
                         )
                         RoundedIconButton(
                             modifier = modifier,
                             imageVector = Icons.Default.Add,
-                            onClick = { Log.d("TAG", "BillForm: Add button clicked.") }
+                            onClick = { splitCounter.value++ }
                         )
                     }
+                }
+                // Tip Row
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(text = "Tip", modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .padding(12.dp), fontWeight = FontWeight.Bold, fontSize = 20.sp)
+                    Spacer(modifier = Modifier.width(160.dp))
+                    Text(text = "$ ${tipAmount.value}", modifier = Modifier.align(Alignment.CenterVertically))
+                }
+                // Slider and percentage column
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "$${tipPercentage} %")
+                    Spacer(modifier = Modifier.height(14.dp))
+                    Slider(
+                        value = sliderPosition.value,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        onValueChange = { newVal ->
+                            sliderPosition.value = newVal
+                            tipAmount.value = getTipAmount(totalBillState.value.trim().toInt(), tipPercentage)
+                        },
+                        steps = 5
+                    )
                 }
             } else {
                 Box(modifier = Modifier)
