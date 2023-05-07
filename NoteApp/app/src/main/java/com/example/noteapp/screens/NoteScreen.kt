@@ -24,9 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.example.noteapp.R
 import com.example.noteapp.component.NoteButton
 import com.example.noteapp.component.NoteInputText
-import com.example.noteapp.data.NotesDataSource
 import com.example.noteapp.model.Note
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun NoteScreen(
@@ -116,9 +114,7 @@ fun NotesRow(
                 style = MaterialTheme.typography.subtitle1
             )
             Text(
-                text = note.entryTime.format(
-                    DateTimeFormatter.ofPattern("EEE, d MMM")
-                ),
+                text = note.entryTime.toString(),
                 style = MaterialTheme.typography.caption
             )
         }
@@ -132,5 +128,5 @@ private fun String.isValidForNote() = this.all { char ->
 @Preview(showBackground = true)
 @Composable
 fun NoteScreenPreview() {
-    NoteScreen(NotesDataSource().loadNotes(), {}, {})
+    NoteScreen(emptyList(), {}, {})
 }
